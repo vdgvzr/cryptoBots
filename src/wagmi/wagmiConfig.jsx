@@ -1,4 +1,5 @@
-import { createConfig, configureChains, mainnet } from "wagmi";
+import { createConfig, configureChains } from "wagmi";
+import { localhost } from "wagmi/chains";
 
 // import { alchemyProvider } from "wagmi/providers/alchemy";
 import { publicProvider } from "wagmi/providers/public";
@@ -12,7 +13,7 @@ import { MetaMaskConnector } from "wagmi/connectors/metaMask";
 // Configure chains & providers with the Alchemy provider.
 // Two popular providers are Alchemy (alchemy.com) and Infura (infura.io)
 const { chains, publicClient, webSocketPublicClient } = configureChains(
-  [mainnet],
+  [localhost],
   [
     // alchemyProvider({ apiKey: "yourAlchemyApiKey" }),
     publicProvider(),
