@@ -1,10 +1,11 @@
-import { CreateBotGen0, GetName } from "../wagmi/wagmiFunctions";
+import { useAccount } from "wagmi";
 
 export default function Home() {
+  const { address } = useAccount();
+
   return (
     <>
-      <GetName />
-      <CreateBotGen0 parts="123" />
+      <div>{address}</div>
     </>
   );
 }

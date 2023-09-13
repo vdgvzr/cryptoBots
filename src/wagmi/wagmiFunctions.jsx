@@ -1,4 +1,4 @@
-import { getEnsName } from "viem/ens";
+import { Button } from "react-bootstrap";
 import NftContract from "../../build/contracts/NftContract.json";
 import {
   useContractWrite,
@@ -6,21 +6,32 @@ import {
   useContractRead,
 } from "wagmi";
 import Web3 from "web3";
-import { NamedFragment } from "ethers";
 
+// Load web3
 window.web3 = new Web3(window.ethereum);
 const networkId = await window.web3.eth.net.getId();
 const networkData = NftContract.networks[networkId];
 
-let CONTRACT_ADDRESS;
+// Initialise contract vars
+let contractAddress;
+let contract;
+let owner;
 
+// If network data is detected from the contract, set the contract vars
 if (networkData) {
-  CONTRACT_ADDRESS = networkData.address;
+  contractAddress = networkData.address;
+  contract = new window.web3.eth.Contract(NftContract.abi, contractAddress);
+  owner = await contract.methods.owner().call();
 }
 
-export function GetName() {
+/**
+ * Contract functions
+ */
+
+// Get the name of the contract
+function GetName() {
   const name = useContractRead({
-    address: CONTRACT_ADDRESS,
+    address: contractAddress,
     abi: [
       {
         name: "name",
@@ -40,12 +51,13 @@ export function GetName() {
     functionName: "name",
   });
 
-  return <>{name.data ? name.data : import.meta.env.VITE_SITE_NAME}</>;
+  return name.data ? name.data : import.meta.env.VITE_SITE_NAME;
 }
 
-export function CreateBotGen0({ parts }) {
+// Create gen 0 bot
+function CreateBotGen0({ parts }) {
   const { config } = usePrepareContractWrite({
-    address: CONTRACT_ADDRESS,
+    address: contractAddress,
     abi: [
       {
         name: "createBotGen0",
@@ -67,9 +79,7 @@ export function CreateBotGen0({ parts }) {
 
   const { write } = useContractWrite(config);
 
-  return (
-    <div>
-      <button onClick={() => write?.()}>createBotGen0</button>
-    </div>
-  );
+  return <Button onClick={() => write?.()}>createBotGen0</Button>;
 }
+
+export { GetName, CreateBotGen0, contract, owner };
