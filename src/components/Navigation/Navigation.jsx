@@ -7,6 +7,7 @@ import { PAGES } from "../../router";
 import { GetName, owner } from "../../wagmi/wagmiFunctions";
 import { useAccount } from "wagmi";
 import Networks from "../Networks/Networks";
+import NFT from "../NftComponent/NFT";
 
 export default function Navigation() {
   const { address, isConnected } = useAccount();
@@ -15,9 +16,12 @@ export default function Navigation() {
   return (
     <Navbar collapseOnSelect expand="lg" className="bg-body-tertiary">
       <Container fluid>
-        <Link className="navbar-brand" href="/">
-          <GetName />
-        </Link>
+        <Link className="navbar-brand" to="/">
+            <span className="navbar-brand__logo me-3">
+              <NFT />
+            </span>
+            <span><GetName /></span>
+          </Link>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="me-auto">
