@@ -9,7 +9,7 @@ function App() {
     <WagmiConfig config={config}>
       <ScrollRestoration />
       <Navigation />
-      <Container>
+      <Container fluid>
         <Outlet />
       </Container>
     </WagmiConfig>

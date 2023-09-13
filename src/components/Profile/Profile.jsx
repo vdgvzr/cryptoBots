@@ -36,7 +36,7 @@ export default function Profile() {
           disabled={!connector.ready}
           key={connector.id}
           onClick={() => connect({ connector })}
-          buttonText={`${connector.name}
+          buttonText={`${connector.name && "Connect " + connector.name}
           ${!connector.ready ? " (unsupported)" : ""} 
           ${
             isLoading && connector.id === pendingConnector?.id

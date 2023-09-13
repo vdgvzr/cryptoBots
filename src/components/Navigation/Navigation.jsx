@@ -6,6 +6,7 @@ import Profile from "../Profile/Profile";
 import { PAGES } from "../../router";
 import { GetName, owner } from "../../wagmi/wagmiFunctions";
 import { useAccount } from "wagmi";
+import Networks from "../Networks/Networks";
 
 export default function Navigation() {
   const { address, isConnected } = useAccount();
@@ -13,7 +14,7 @@ export default function Navigation() {
 
   return (
     <Navbar collapseOnSelect expand="lg" className="bg-body-tertiary">
-      <Container>
+      <Container fluid>
         <Link className="navbar-brand" href="/">
           <GetName />
         </Link>
@@ -36,6 +37,7 @@ export default function Navigation() {
             })}
           </Nav>
           <Nav>
+            <Networks />
             <Profile />
           </Nav>
         </Navbar.Collapse>

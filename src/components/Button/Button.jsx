@@ -44,7 +44,7 @@ export default function Btn({ buttonText, onClick, classes, href, disabled }) {
   return (
     <>
       <div
-        className={`wrapper ${classes ? classes : ""} ${
+        className={`custom-btn-wrapper ${classes ? classes : ""} ${
           disabled ? "custom-btn-disabled" : ""
         }`}
         onClick={!disabled ? onClick : undefined}
