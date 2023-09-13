@@ -1,0 +1,15 @@
+// Color
+
+@function colour($palette, $tone: "base") {
+  @return map-get(map-get($palettes, $palette), $tone);
+}
+
+@function color($palette, $tone: "base") {
+  @return colour($palette, $tone);
+}
+
+// Function - rem
+
+@function rem($px: $base-font-size) {
+  @return calc($px / $base-font-size) + rem;
+}

@@ -7,6 +7,7 @@ import {
   useEnsAvatar,
   useEnsName,
 } from "wagmi";
+import Btn from "../Button/Button";
 
 export default function Profile() {
   const { address, isConnected } = useAccount();
@@ -20,9 +21,10 @@ export default function Profile() {
     return (
       <div>
         {ensAvatar && <img src={ensAvatar} alt="ENS Avatar" />}
-        <Button onClick={disconnect}>
-          {ensName ? ensName : formatAddress(address)}
-        </Button>
+        <Btn
+          onClick={disconnect}
+          buttonText={ensName ? ensName : formatAddress(address)}
+        />
       </div>
     );
   }
@@ -30,17 +32,18 @@ export default function Profile() {
   return (
     <div>
       {connectors.map((connector) => (
-        <Button
+        <Btn
           disabled={!connector.ready}
           key={connector.id}
           onClick={() => connect({ connector })}
-        >
-          {connector.name}
-          {!connector.ready && " (unsupported)"}
-          {isLoading &&
-            connector.id === pendingConnector?.id &&
-            " (connecting)"}
-        </Button>
+          buttonText={`${connector.name}
+          ${!connector.ready ? " (unsupported)" : ""} 
+          ${
+            isLoading && connector.id === pendingConnector?.id
+              ? " (connecting)"
+              : ""
+          }`}
+        />
       ))}
 
       {error && <div>{error.message}</div>}
