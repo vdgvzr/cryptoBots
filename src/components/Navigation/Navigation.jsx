@@ -4,24 +4,26 @@ import Navbar from "react-bootstrap/Navbar";
 import { Link } from "react-router-dom";
 import Profile from "../Profile/Profile";
 import { PAGES } from "../../router";
-import { GetName, owner } from "../../wagmi/wagmiFunctions";
+import { useGetName, useGetOwner } from "../../wagmi/wagmiHooks";
 import { useAccount } from "wagmi";
 import Networks from "../Networks/Networks";
 import NFT from "../NftComponent/NFT";
 
 export default function Navigation() {
   const { address, isConnected } = useAccount();
+  const name = useGetName();
+  const owner = useGetOwner();
   const isOwner = owner === address;
 
   return (
     <Navbar collapseOnSelect expand="lg" className="bg-body-tertiary">
       <Container fluid>
         <Link className="navbar-brand" to="/">
-            <span className="navbar-brand__logo me-3">
-              <NFT />
-            </span>
-            <span><GetName /></span>
-          </Link>
+          <span className="navbar-brand__logo me-3">
+            <NFT />
+          </span>
+          <span>{name}</span>
+        </Link>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="me-auto">

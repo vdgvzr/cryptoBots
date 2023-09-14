@@ -6,30 +6,27 @@ import {
   useContractRead,
 } from "wagmi";
 import Web3 from "web3";
+import Btn from "../components/Button/Button";
 
 // Load web3
 window.web3 = new Web3(window.ethereum);
 const networkId = await window.web3.eth.net.getId();
 const networkData = NftContract.networks[networkId];
 
-// Initialise contract vars
+// Initialise contract address
 let contractAddress;
-let contract;
-let owner;
 
-// If network data is detected from the contract, set the contract vars
+// If network data is detected from the contract, set the contract address
 if (networkData) {
   contractAddress = networkData.address;
-  contract = new window.web3.eth.Contract(NftContract.abi, contractAddress);
-  owner = await contract.methods.owner().call();
 }
 
 /**
- * Contract functions
+ * Contract read functions
  */
 
 // Get the name of the contract
-function GetName() {
+function useGetName() {
   const name = useContractRead({
     address: contractAddress,
     abi: [
@@ -54,13 +51,69 @@ function GetName() {
   return name.data ? name.data : import.meta.env.VITE_SITE_NAME;
 }
 
+// Get the contract owner address
+function useGetOwner() {
+  const owner = useContractRead({
+    address: contractAddress,
+    abi: [
+      {
+        inputs: [],
+        name: "owner",
+        outputs: [
+          {
+            internalType: "address",
+            name: "",
+            type: "address",
+          },
+        ],
+        stateMutability: "view",
+        type: "function",
+        constant: true,
+      },
+    ],
+    functionName: "owner",
+  });
+
+  return owner.data;
+}
+
+// Get the total supply of bots
+function useGetTotalSupply() {
+  const totalSupply = useContractRead({
+    address: contractAddress,
+    abi: [
+      {
+        inputs: [],
+        name: "totalSupply",
+        outputs: [
+          {
+            internalType: "uint256",
+            name: "",
+            type: "uint256",
+          },
+        ],
+        stateMutability: "view",
+        type: "function",
+        constant: true,
+      },
+    ],
+    functionName: "totalSupply",
+  });
+
+  return totalSupply.data ? parseInt(totalSupply.data) : 0;
+}
+
+/**
+ * Contract write functions
+ */
+
 // Create gen 0 bot
 function CreateBotGen0({ parts }) {
   const { config } = usePrepareContractWrite({
     address: contractAddress,
     abi: [
       {
-        name: "createBotGen0",
+        name: "CreateBotGen0",
         type: "function",
         stateMutability: "nonpayable",
         inputs: [
@@ -73,13 +126,13 @@ function CreateBotGen0({ parts }) {
         outputs: [],
       },
     ],
-    functionName: "createBotGen0",
+    functionName: "CreateBotGen0",
     args: [parseInt(parts)],
   });
 
   const { write } = useContractWrite(config);
 
-  return <Button onClick={() => write?.()}>createBotGen0</Button>;
+  return () => write?.();
 }
 
-export { GetName, CreateBotGen0, contract, owner };
+export { useGetName, useGetOwner, useGetTotalSupply, CreateBotGen0 };
