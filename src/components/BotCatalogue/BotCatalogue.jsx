@@ -25,21 +25,13 @@ export default function BotCatalogue({ type }) {
             } else if (type === "catalogue") {
               return (
                 <Col lg={3} key={index}>
-                  <NFT
-                    type="card"
-                    gen={gen}
-                    parts={parseInt(bot.parts.toString())}
-                  />
+                  <NFT type="card" gen={gen} parts={parts} />
                 </Col>
               );
             } else if (type === "account" && owner === address) {
               return (
                 <Col lg={3} key={index}>
-                  <NFT
-                    type="card"
-                    gen={gen}
-                    parts={parseInt(bot.parts.toString())}
-                  />
+                  <NFT type="card" gen={gen} parts={parts} />
                 </Col>
               );
             }

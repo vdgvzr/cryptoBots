@@ -2,6 +2,8 @@ import { createBrowserRouter } from "react-router-dom";
 import App from "./App";
 import Home from "./pages/Home";
 import Admin from "./pages/Admin";
+import Catalogue from "./pages/Catalogue";
+import Account from "./pages/Account";
 
 export const router = createBrowserRouter([
   {
@@ -21,11 +23,11 @@ export const router = createBrowserRouter([
           },
           {
             path: "catalogue",
-            element: <p>Catalogue</p>,
+            element: <Catalogue />,
           },
           {
             path: "account",
-            element: <p>Account</p>,
+            element: <Account />,
           },
           {
             path: "*",

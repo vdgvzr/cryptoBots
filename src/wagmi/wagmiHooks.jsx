@@ -8,6 +8,7 @@ import {
 } from "wagmi";
 import Web3 from "web3";
 import Btn from "../components/Button/Button";
+import { useDebounce } from "../hooks/useDebouce";
 
 // Load web3
 window.web3 = new Web3(window.ethereum);
@@ -221,6 +222,7 @@ function useGetBotCatalogue() {
 // Create gen 0 bot
 function CreateBotGen0() {
   const [parts, setParts] = useState(0);
+  const debouncedParts = useDebounce(parts, 500);
 
   function generateDna() {
     let dna = [];
@@ -233,7 +235,11 @@ function CreateBotGen0() {
     return parseInt(dna.join(""));
   }
 
-  const { config } = usePrepareContractWrite({
+  const {
+    config,
+    error: prepareError,
+    isError: isPrepareError,
+  } = usePrepareContractWrite({
     address: contractAddress,
     abi: [
       {
@@ -251,11 +257,11 @@ function CreateBotGen0() {
       },
     ],
     functionName: "createBotGen0",
-    args: [parseInt(parts)],
-    enabled: Boolean(parts !== 0),
+    args: [parseInt(debouncedParts)],
+    enabled: Boolean(debouncedParts !== 0),
   });
 
-  const { data, write } = useContractWrite(config);
+  const { data, error, isError, write } = useContractWrite(config);
 
   const { isLoading, isSuccess } = useWaitForTransaction({
     hash: data?.hash,
@@ -285,6 +291,9 @@ function CreateBotGen0() {
               <a href={`https://etherscan.io/tx/${data?.hash}`}>Etherscan</a>
             </div>
           </div>
+        )}
+        {(isPrepareError || isError) && (
+          <div>Error: {(prepareError || error)?.message}</div>
         )}
       </>
     );
