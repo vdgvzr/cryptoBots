@@ -1,4 +1,3 @@
-import { Button } from "react-bootstrap";
 import { formatAddress } from "../../utils/index";
 import {
   useAccount,

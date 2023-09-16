@@ -1,9 +1,10 @@
-import { Button } from "react-bootstrap";
+import { useState } from "react";
 import NftContract from "../../build/contracts/NftContract.json";
 import {
   useContractWrite,
   usePrepareContractWrite,
   useContractRead,
+  useWaitForTransaction,
 } from "wagmi";
 import Web3 from "web3";
 import Btn from "../components/Button/Button";
@@ -79,7 +80,7 @@ function useGetOwner() {
 
 // Get the total supply of bots
 function useGetTotalSupply() {
-  const totalSupply = useContractRead({
+  const supply = useContractRead({
     address: contractAddress,
     abi: [
       {
@@ -100,7 +101,117 @@ function useGetTotalSupply() {
     functionName: "totalSupply",
   });
 
-  return totalSupply.data ? parseInt(totalSupply.data) : 0;
+  return supply.data ? parseInt(supply.data) : 0;
+}
+
+// Get gen 0 creation limit
+function useGetCreationLimit() {
+  const limit = useContractRead({
+    address: contractAddress,
+    abi: [
+      {
+        inputs: [],
+        name: "CREATION_LIMIT_GEN0",
+        outputs: [
+          {
+            internalType: "uint256",
+            name: "",
+            type: "uint256",
+          },
+        ],
+        stateMutability: "view",
+        type: "function",
+        constant: true,
+      },
+    ],
+    functionName: "CREATION_LIMIT_GEN0",
+  });
+
+  return limit.data ? parseInt(limit.data) : 0;
+}
+
+// Get gen 0 creation counter
+function useGetCreationCounter() {
+  const counter = useContractRead({
+    address: contractAddress,
+    abi: [
+      {
+        inputs: [],
+        name: "GEN0_COUNTER",
+        outputs: [
+          {
+            internalType: "uint256",
+            name: "",
+            type: "uint256",
+          },
+        ],
+        stateMutability: "view",
+        type: "function",
+        constant: true,
+      },
+    ],
+    functionName: "GEN0_COUNTER",
+  });
+
+  return counter.data ? parseInt(counter.data) : 0;
+}
+
+// Get the bot catalogue
+function useGetBotCatalogue() {
+  const catalogue = useContractRead({
+    address: contractAddress,
+    abi: [
+      {
+        inputs: [],
+        name: "getCatalogue",
+        outputs: [
+          {
+            components: [
+              {
+                internalType: "uint256",
+                name: "parts",
+                type: "uint256",
+              },
+              {
+                internalType: "uint64",
+                name: "creationTime",
+                type: "uint64",
+              },
+              {
+                internalType: "uint32",
+                name: "materId",
+                type: "uint32",
+              },
+              {
+                internalType: "uint32",
+                name: "paterId",
+                type: "uint32",
+              },
+              {
+                internalType: "uint16",
+                name: "generation",
+                type: "uint16",
+              },
+              {
+                internalType: "address",
+                name: "owner",
+                type: "address",
+              },
+            ],
+            internalType: "struct NftContract.Bot[]",
+            name: "",
+            type: "tuple[]",
+          },
+        ],
+        stateMutability: "view",
+        type: "function",
+        constant: true,
+      },
+    ],
+    functionName: "getCatalogue",
+  });
+
+  return catalogue.data;
 }
 
 /**
@@ -108,12 +219,25 @@ function useGetTotalSupply() {
  */
 
 // Create gen 0 bot
-function CreateBotGen0({ parts }) {
+function CreateBotGen0() {
+  const [parts, setParts] = useState(0);
+
+  function generateDna() {
+    let dna = [];
+
+    for (let i = 0; i < 14; i++) {
+      let randomNumber = Math.random() * (9 - 0) + 0;
+      dna.push(parseInt(randomNumber));
+    }
+
+    return parseInt(dna.join(""));
+  }
+
   const { config } = usePrepareContractWrite({
     address: contractAddress,
     abi: [
       {
-        name: "CreateBotGen0",
+        name: "createBotGen0",
         type: "function",
         stateMutability: "nonpayable",
         inputs: [
@@ -126,13 +250,64 @@ function CreateBotGen0({ parts }) {
         outputs: [],
       },
     ],
-    functionName: "CreateBotGen0",
+    functionName: "createBotGen0",
     args: [parseInt(parts)],
+    enabled: Boolean(parts !== 0),
   });
 
-  const { write } = useContractWrite(config);
+  const { data, write } = useContractWrite(config);
 
-  return () => write?.();
+  const { isLoading, isSuccess } = useWaitForTransaction({
+    hash: data?.hash,
+  });
+
+  if (write) {
+    return (
+      <>
+        <Btn
+          buttonText={"Generate parts"}
+          onClick={() => {
+            setParts(generateDna());
+          }}
+        />
+        {parts}
+        <Btn
+          disabled={!write || isLoading || parts === 0}
+          buttonText={isLoading ? "Creating..." : "Mint Gen 0 Bot"}
+          onClick={() => {
+            write?.();
+          }}
+        />
+        {isSuccess && (
+          <div>
+            Successfully minted your NFT!
+            <div>
+              <a href={`https://etherscan.io/tx/${data?.hash}`}>Etherscan</a>
+            </div>
+          </div>
+        )}
+      </>
+    );
+  }
 }
 
-export { useGetName, useGetOwner, useGetTotalSupply, CreateBotGen0 };
+/**
+ * Contract variable functions
+ */
+
+// Set isOwner var
+function useIsOwner() {
+  const owner = useGetOwner();
+  return owner;
+}
+
+export {
+  useGetName,
+  useGetOwner,
+  useGetTotalSupply,
+  useGetCreationLimit,
+  useGetCreationCounter,
+  useGetBotCatalogue,
+  CreateBotGen0,
+  useIsOwner,
+};

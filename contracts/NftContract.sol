@@ -23,9 +23,10 @@ contract NftContract is ERC721, Ownable {
         uint32 materId;
         uint32 paterId;
         uint16 generation;
+        address owner;
     }
 
-    Bot[] bots;
+    Bot[] public bots;
 
     uint256 public constant CREATION_LIMIT_GEN0 = 10;
     uint256 public GEN0_COUNTER;
@@ -56,7 +57,8 @@ contract NftContract is ERC721, Ownable {
             creationTime: uint64(block.timestamp),
             materId: uint32(_materId),
             paterId: uint32(_paterId),
-            generation: uint16(_generation)
+            generation: uint16(_generation),
+            owner: address(_owner)
         });
 
         bots.push(_bot);
@@ -69,6 +71,10 @@ contract NftContract is ERC721, Ownable {
         _safeMint(_owner, newBotId);
 
         return newBotId;
+    }
+
+    function getCatalogue() public view returns (Bot[] memory) {
+        return bots;
     }
 
     function getBot(uint256 tokenId) public view returns (

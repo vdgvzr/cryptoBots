@@ -44,9 +44,7 @@ export default function Btn({ buttonText, onClick, classes, href, disabled }) {
   return (
     <>
       <div
-        className={`custom-btn-wrapper ${classes ? classes : ""} ${
-          disabled ? "custom-btn-disabled" : ""
-        }`}
+        className={`custom-btn-wrapper${classes ? classes : ""}`}
         onClick={!disabled ? onClick : undefined}
       >
         <a
@@ -61,7 +59,11 @@ export default function Btn({ buttonText, onClick, classes, href, disabled }) {
           target="_blank"
           rel="noreferrer"
         >
-          <span className="custom-btn-inner">
+          <span
+            className={`custom-btn-inner ${
+              disabled ? "custom-btn-disabled" : ""
+            }`}
+          >
             <span className="content-wrapper">
               <span className="custom-btn-content">
                 <span className="custom-btn-content-inner">
