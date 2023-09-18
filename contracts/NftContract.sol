@@ -24,6 +24,7 @@ contract NftContract is ERC721, Ownable {
         uint32 paterId;
         uint16 generation;
         address owner;
+        uint256 id;
     }
 
     Bot[] public bots;
@@ -58,7 +59,8 @@ contract NftContract is ERC721, Ownable {
             materId: uint32(_materId),
             paterId: uint32(_paterId),
             generation: uint16(_generation),
-            owner: address(_owner)
+            owner: address(_owner),
+            id: uint256(bots.length + 1)
         });
 
         bots.push(_bot);
@@ -83,7 +85,8 @@ contract NftContract is ERC721, Ownable {
         uint256 materId,
         uint256 paterId,
         uint256 generation,
-        address owner
+        address owner,
+        uint256 id
     ) {
         Bot storage bot = bots[tokenId];
 
@@ -93,14 +96,15 @@ contract NftContract is ERC721, Ownable {
         paterId = uint256(bot.paterId);
         generation = uint256(bot.generation);
         owner = address(ownerOf(tokenId));
+        id = uint256(bot.id);
     }
 
     function synthesize(uint256 _paterId, uint256 _materId) public {
         require(ownerOf(_paterId) == _msgSender(), "The user doesn't own the token");
         require(ownerOf(_materId) == _msgSender(), "The user doesn't own the token");
 
-        ( uint256 paterParts,,,,, ) = getBot(_paterId);
-        ( uint256 _materParts,,,,uint256 materGeneration, ) = getBot(_materId);
+        ( uint256 paterParts,,,,,, ) = getBot(_paterId);
+        ( uint256 _materParts,,,,uint256 materGeneration,, ) = getBot(_materId);
 
         uint256 newParts = _mixParts(paterParts, _materParts);
 

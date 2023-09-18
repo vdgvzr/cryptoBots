@@ -2,7 +2,7 @@ import { Card } from "react-bootstrap";
 import { allColors } from "../../assets/js/nftAttributes/colors";
 import Base from "./Base";
 
-export default function NFT({ parts, gen, type }) {
+export default function NFT({ id, parts, gen, type }) {
   const colors = Object.values(allColors());
 
   let generate;
@@ -44,6 +44,7 @@ export default function NFT({ parts, gen, type }) {
         <Card>
           <Base parts={generate} />
           <Card.Body>
+            {id && <Card.Title>#{id}</Card.Title>}
             {gen && <Card.Title>GEN: {gen}</Card.Title>}
             <Card.Text>PARTS: {parts}</Card.Text>
           </Card.Body>

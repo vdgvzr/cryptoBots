@@ -198,6 +198,11 @@ function useGetBotCatalogue() {
                 name: "owner",
                 type: "address",
               },
+              {
+                internalType: "uint256",
+                name: "id",
+                type: "uint256",
+              },
             ],
             internalType: "struct NftContract.Bot[]",
             name: "",
@@ -243,9 +248,6 @@ function CreateBotGen0() {
     address: contractAddress,
     abi: [
       {
-        name: "createBotGen0",
-        type: "function",
-        stateMutability: "nonpayable",
         inputs: [
           {
             internalType: "uint256",
@@ -253,7 +255,10 @@ function CreateBotGen0() {
             type: "uint256",
           },
         ],
+        name: "createBotGen0",
         outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
       },
     ],
     functionName: "createBotGen0",
@@ -267,37 +272,98 @@ function CreateBotGen0() {
     hash: data?.hash,
   });
 
-  if (write) {
-    return (
-      <>
-        <Btn
-          buttonText={"Generate parts"}
-          onClick={() => {
-            setParts(generateDna());
-          }}
-        />
-        {parts}
-        <Btn
-          disabled={!write || isLoading || parts === 0}
-          buttonText={isLoading ? "Creating..." : "Mint Gen 0 Bot"}
-          onClick={() => {
-            write?.();
-          }}
-        />
-        {isSuccess && (
+  return (
+    <>
+      <Btn
+        buttonText={"Generate parts"}
+        onClick={() => {
+          setParts(generateDna());
+        }}
+      />
+      {parts}
+      <Btn
+        disabled={!write || isLoading || parts === 0}
+        buttonText={isLoading ? "Creating..." : "Mint Gen 0 Bot"}
+        onClick={() => {
+          write?.();
+        }}
+      />
+      {isSuccess && (
+        <div>
+          Successfully minted your NFT!
           <div>
-            Successfully minted your NFT!
-            <div>
-              <a href={`https://etherscan.io/tx/${data?.hash}`}>Etherscan</a>
-            </div>
+            <a href={`https://etherscan.io/tx/${data?.hash}`}>Etherscan</a>
           </div>
-        )}
-        {(isPrepareError || isError) && (
-          <div>Error: {(prepareError || error)?.message}</div>
-        )}
-      </>
-    );
-  }
+        </div>
+      )}
+      {(isPrepareError || isError) && (
+        <div>Error: {(prepareError || error)?.message}</div>
+      )}
+    </>
+  );
+}
+
+// Synthesize two bots to create new one
+function Synthesize({ materId, paterId }) {
+  const {
+    config,
+    error: prepareError,
+    isError: isPrepareError,
+  } = usePrepareContractWrite({
+    address: contractAddress,
+    abi: [
+      {
+        inputs: [
+          {
+            internalType: "uint256",
+            name: "_paterId",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "_materId",
+            type: "uint256",
+          },
+        ],
+        name: "synthesize",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+      },
+    ],
+    functionName: "synthesize",
+    args: [materId, paterId],
+    enabled: Boolean(materId !== null && paterId !== null),
+  });
+
+  const { data, error, isError, write } = useContractWrite(config);
+
+  const { isLoading, isSuccess } = useWaitForTransaction({
+    hash: data?.hash,
+  });
+
+  return (
+    <>
+      <Btn
+        disabled={!write || isLoading || (materId === null && paterId === null)}
+        buttonText={isLoading ? "Synthesizing..." : "Synthesize Bots"}
+        onClick={() => {
+          write?.();
+        }}
+      />
+      {isSuccess && (
+        <div>
+          Successfully minted your NFT!
+          <div>
+            <a href={`https://etherscan.io/tx/${data?.hash}`}>Etherscan</a>
+          </div>
+        </div>
+      )}
+      {(isPrepareError || isError) && (
+        <div>Error: {(prepareError || error)?.message}</div>
+      )}
+    </>
+  );
 }
 
 /**
@@ -318,5 +384,6 @@ export {
   useGetCreationCounter,
   useGetBotCatalogue,
   CreateBotGen0,
+  Synthesize,
   useIsOwner,
 };
