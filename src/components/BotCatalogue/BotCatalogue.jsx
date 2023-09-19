@@ -3,9 +3,41 @@ import NFT from "../NftComponent/NFT";
 import { useAccount } from "wagmi";
 import { useGetBotCatalogue } from "../../wagmi/wagmiHooks";
 
-export default function BotCatalogue({ type }) {
+export default function BotCatalogue({
+  type,
+  prevGeneration,
+  setPrevGeneration,
+}) {
   const bots = useGetBotCatalogue();
   const { address } = useAccount();
+
+  function handleSelectBot(id) {
+    if (prevGeneration.materId === id || prevGeneration.paterId === id) {
+      if (prevGeneration.materId === id) {
+        setPrevGeneration((prev) => ({
+          ...prev,
+          materId: 0,
+        }));
+      } else if (prevGeneration.paterId === id) {
+        setPrevGeneration((prev) => ({
+          ...prev,
+          paterId: 0,
+        }));
+      }
+    } else {
+      if (prevGeneration.materId === 0) {
+        setPrevGeneration((prev) => ({
+          ...prev,
+          materId: id,
+        }));
+      } else if (prevGeneration.paterId === 0) {
+        setPrevGeneration((prev) => ({
+          ...prev,
+          paterId: id,
+        }));
+      }
+    }
+  }
 
   return (
     <>
@@ -16,6 +48,8 @@ export default function BotCatalogue({ type }) {
             const gen = bot && bot.generation.toString();
             const owner = bot && bot.owner;
             const parts = bot && bot.parts.toString();
+            const selected =
+              prevGeneration?.materId === id || prevGeneration?.paterId === id;
 
             if (gen === "0" && type === "admin") {
               return (
@@ -32,7 +66,14 @@ export default function BotCatalogue({ type }) {
             } else if (type === "account" && owner === address) {
               return (
                 <Col lg={2} key={index}>
-                  <NFT type="card" id={id} gen={gen} parts={parts} />
+                  <NFT
+                    selectBot={handleSelectBot}
+                    type="card"
+                    id={id}
+                    gen={gen}
+                    parts={parts}
+                    selected={selected}
+                  />
                 </Col>
               );
             }

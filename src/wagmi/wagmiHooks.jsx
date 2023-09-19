@@ -333,7 +333,7 @@ function Synthesize({ materId, paterId }) {
     ],
     functionName: "synthesize",
     args: [materId, paterId],
-    enabled: Boolean(materId !== null && paterId !== null),
+    enabled: Boolean(materId && paterId),
   });
 
   const { data, error, isError, write } = useContractWrite(config);

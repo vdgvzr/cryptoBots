@@ -5,8 +5,8 @@ import { useState } from "react";
 
 export default function Account() {
   const [prevGeneration, setPrevGeneration] = useState({
-    materId: null,
-    paterId: null,
+    materId: 0,
+    paterId: 0,
   });
 
   return (
@@ -20,7 +20,11 @@ export default function Account() {
         </Col>
       </Row>
       <h5>Select bots to synthesize</h5>
-      <BotCatalogue type="account" />
+      <BotCatalogue
+        prevGeneration={prevGeneration}
+        setPrevGeneration={setPrevGeneration}
+        type="account"
+      />
     </>
   );
 }
