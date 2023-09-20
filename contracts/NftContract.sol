@@ -60,7 +60,7 @@ contract NftContract is ERC721, Ownable {
             paterId: uint32(_paterId),
             generation: uint16(_generation),
             owner: address(_owner),
-            id: uint256(bots.length + 1)
+            id: uint256(bots.length)
         });
 
         bots.push(_bot);
@@ -102,24 +102,71 @@ contract NftContract is ERC721, Ownable {
     function synthesize(uint256 _paterId, uint256 _materId) public {
         require(ownerOf(_paterId) == _msgSender(), "The user doesn't own the token");
         require(ownerOf(_materId) == _msgSender(), "The user doesn't own the token");
+        require(_paterId != _materId, "The robot can't be used twice");
 
-        ( uint256 paterParts,,,,,, ) = getBot(_paterId);
+        ( uint256 _paterParts,,,,uint256 paterGeneration,, ) = getBot(_paterId);
         ( uint256 _materParts,,,,uint256 materGeneration,, ) = getBot(_materId);
 
-        uint256 newParts = _mixParts(paterParts, _materParts);
+        uint256 newParts = _mixParts(_paterParts, _materParts);
 
-        uint256 newGen = materGeneration + 1;
+        uint256 newGen = 0;
+        if (paterGeneration < materGeneration) {
+            newGen = materGeneration + 1;
+            newGen /= 2;
+        } else if (paterGeneration > materGeneration) {
+            newGen = paterGeneration + 1;
+            newGen /= 2;
+        } else {
+            newGen = materGeneration + 1;
+        }
 
         _createBot(_materId, _paterId, newGen, newParts, _msgSender());
     }
 
-    function _mixParts(uint256 _paterParts, uint256 _materParts) internal pure returns (uint256) {
-        uint256 paterHalf = _paterParts / 10000000;
-        uint256 materHalf = _materParts % 10000000;
+    function _mixParts(uint256 _paterParts, uint256 _materParts) public returns (uint256) {
+        uint256[8] memory materArr;
+        uint256[8] memory paterArr;
+        uint256 newParts = 0;
 
-        uint256 newParts = paterHalf * 10000000;
-        newParts = newParts + materHalf;
+
+        for (uint256 i = 0; i <= 7; i++) {
+            materArr[i] = _materParts % 100;
+            paterArr[i] = _paterParts % 100;
+
+            _materParts /= 100;
+            _paterParts /= 100;
+        }
+
+        uint256 index = 7;
+
+        for (uint256 i = 0; i < materArr.length; i++) {
+            uint256[] memory pair = new uint256[](2);
+            pair[0] = materArr[index];
+            pair[1] = paterArr[index];
+            
+            if (pair[0] != 1 || pair[1] != 1) {
+                if (_generateRandomNumber(2) == 1) {
+                    newParts += pair[0];
+                } else {
+                    newParts += pair[1];
+                }
+            } else {
+                newParts += _generateRandomNumber(100);
+            } 
+
+            if (i != 7) {
+                newParts *= 100;
+                index -= 1;
+            }
+        }
 
         return newParts;
+    }
+
+    uint seed = 0;
+
+    function _generateRandomNumber(uint _modulus) internal returns(uint){
+        seed++;
+        return uint(keccak256(abi.encodePacked(block.timestamp, msg.sender, seed))) % _modulus;
     }
 }

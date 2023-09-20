@@ -232,7 +232,7 @@ function CreateBotGen0() {
   function generateDna() {
     let dna = [];
 
-    for (let i = 0; i < 14; i++) {
+    for (let i = 0; i < 16; i++) {
       let randomNumber = Math.random() * (9 - 0) + 0;
       dna.push(parseInt(randomNumber));
     }
@@ -305,6 +305,7 @@ function CreateBotGen0() {
 
 // Synthesize two bots to create new one
 function Synthesize({ materId, paterId }) {
+  console.log(materId, paterId);
   const {
     config,
     error: prepareError,
@@ -332,8 +333,8 @@ function Synthesize({ materId, paterId }) {
       },
     ],
     functionName: "synthesize",
-    args: [materId, paterId],
-    enabled: Boolean(materId && paterId),
+    args: [parseInt(materId), parseInt(paterId)],
+    enabled: Boolean(materId !== null && paterId !== null),
   });
 
   const { data, error, isError, write } = useContractWrite(config);

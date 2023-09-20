@@ -16,21 +16,21 @@ export default function BotCatalogue({
       if (prevGeneration.materId === id) {
         setPrevGeneration((prev) => ({
           ...prev,
-          materId: 0,
+          materId: null,
         }));
       } else if (prevGeneration.paterId === id) {
         setPrevGeneration((prev) => ({
           ...prev,
-          paterId: 0,
+          paterId: null,
         }));
       }
     } else {
-      if (prevGeneration.materId === 0) {
+      if (prevGeneration.materId === null) {
         setPrevGeneration((prev) => ({
           ...prev,
           materId: id,
         }));
-      } else if (prevGeneration.paterId === 0) {
+      } else if (prevGeneration.paterId === null) {
         setPrevGeneration((prev) => ({
           ...prev,
           paterId: id,
@@ -54,13 +54,25 @@ export default function BotCatalogue({
             if (gen === "0" && type === "admin") {
               return (
                 <Col lg={2} key={index}>
-                  <NFT type="card" id={id} gen={gen} parts={parts} />
+                  <NFT
+                    type="card"
+                    id={id}
+                    gen={gen}
+                    parts={parts}
+                    owner={owner}
+                  />
                 </Col>
               );
             } else if (type === "catalogue") {
               return (
                 <Col lg={2} key={index}>
-                  <NFT type="card" id={id} gen={gen} parts={parts} />
+                  <NFT
+                    type="card"
+                    id={id}
+                    gen={gen}
+                    parts={parts}
+                    owner={owner}
+                  />
                 </Col>
               );
             } else if (type === "account" && owner === address) {
@@ -72,6 +84,7 @@ export default function BotCatalogue({
                     id={id}
                     gen={gen}
                     parts={parts}
+                    owner={owner}
                     selected={selected}
                   />
                 </Col>

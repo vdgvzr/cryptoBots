@@ -5,8 +5,8 @@ import { useState } from "react";
 
 export default function Account() {
   const [prevGeneration, setPrevGeneration] = useState({
-    materId: 0,
-    paterId: 0,
+    materId: null,
+    paterId: null,
   });
 
   return (

@@ -2,7 +2,15 @@ import { Card } from "react-bootstrap";
 import { allColors } from "../../assets/js/nftAttributes/colors";
 import Base from "./Base";
 
-export default function NFT({ id, parts, gen, type, selectBot, selected }) {
+export default function NFT({
+  id,
+  parts,
+  gen,
+  type,
+  selectBot,
+  selected,
+  owner,
+}) {
   const colors = Object.values(allColors());
 
   let generate;
@@ -38,16 +46,24 @@ export default function NFT({ id, parts, gen, type, selectBot, selected }) {
     };
   }
 
+  let index = 7;
+
+  for (let i = 1; i < 9; i++) {
+    console.log(index);
+    index -= 1;
+  }
+
   return (
     <>
       {type === "card" ? (
         <Card onClick={() => selectBot?.(id)}>
           <Base parts={generate} />
           <Card.Body>
-            {id && <Card.Title>#{id}</Card.Title>}
-            {gen && <Card.Title>GEN: {gen}</Card.Title>}
+            {<Card.Title>#{id}</Card.Title>}
+            {<Card.Title>GEN: {gen}</Card.Title>}
             {selected && <Card.Title>Selected</Card.Title>}
             <Card.Text>PARTS: {parts}</Card.Text>
+            <Card.Text>Owner: {owner}</Card.Text>
           </Card.Body>
         </Card>
       ) : (
