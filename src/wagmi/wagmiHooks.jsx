@@ -305,7 +305,6 @@ function CreateBotGen0() {
 
 // Synthesize two bots to create new one
 function Synthesize({ materId, paterId }) {
-  console.log(materId, paterId);
   const {
     config,
     error: prepareError,

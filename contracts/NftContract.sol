@@ -145,10 +145,13 @@ contract NftContract is ERC721, Ownable {
             pair[1] = paterArr[index];
             
             if (pair[0] != 1 || pair[1] != 1) {
-                if (_generateRandomNumber(2) == 1) {
+                // 10% chance of random mutation
+                if (_generateRandomNumber(10) <= 4) {
                     newParts += pair[0];
-                } else {
+                } else if (_generateRandomNumber(10) > 4 && _generateRandomNumber(10) <= 8) {
                     newParts += pair[1];
+                } else {
+                    newParts += _generateRandomNumber(100);
                 }
             } else {
                 newParts += _generateRandomNumber(100);

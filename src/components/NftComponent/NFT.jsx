@@ -46,13 +46,6 @@ export default function NFT({
     };
   }
 
-  let index = 7;
-
-  for (let i = 1; i < 9; i++) {
-    console.log(index);
-    index -= 1;
-  }
-
   return (
     <>
       {type === "card" ? (
