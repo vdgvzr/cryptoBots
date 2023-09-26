@@ -13,7 +13,9 @@ contract NftContract is ERC721, Ownable {
     using SafeMath for uint32;
     using SafeMath for uint16;
 
-    constructor() ERC721("CryptoBots", "CRB") {}
+    constructor() ERC721("CryptoBots", "CRB") {
+        _createBot(0, 0, 0, 0, address(this));
+    }
 
     event Birth(address owner, uint256 botId, uint256 materId, uint256 paterId, uint256 parts);
 
@@ -146,9 +148,9 @@ contract NftContract is ERC721, Ownable {
             
             if (pair[0] != 1 || pair[1] != 1) {
                 // 10% chance of random mutation
-                if (_generateRandomNumber(10) <= 4) {
+                if (_generateRandomNumber(100) <= 46) {
                     newParts += pair[0];
-                } else if (_generateRandomNumber(10) > 4 && _generateRandomNumber(10) <= 8) {
+                } else if (_generateRandomNumber(100) > 46 && _generateRandomNumber(100) <= 98) {
                     newParts += pair[1];
                 } else {
                     newParts += _generateRandomNumber(100);
